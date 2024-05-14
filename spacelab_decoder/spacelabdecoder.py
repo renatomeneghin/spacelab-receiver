@@ -43,7 +43,8 @@ import zmq
 
 import pyngham
 
-from spacelab_decoder.mm_decoder import mm_decoder
+#from spacelab_decoder.mm_decoder import mm_decoder
+from spacelabdecoder.gmsk_Test import gmsk_Test
 import spacelab_decoder.version
 
 from spacelab_decoder.bit_buffer import BitBuffer, _BIT_BUFFER_LSB
@@ -441,7 +442,7 @@ class SpaceLabDecoder:
         self.entry_preferences_downlink_s0.set_text('0x' + _DEFAULT_DOWNLINK_SYNC_WORD[8:10])
 
     def _decode_audio(self, audio_file, sample_rate, baud, play):
-        tb = mm_decoder(input_file=audio_file, samp_rate=sample_rate, baudrate=baud, zmq_adr=_ZMQ_PUSH_PULL_ADDRESS, play_audio=play)
+        tb = gmsk_Test(input_file=audio_file, samp_rate=sample_rate, baudrate=baud, zmq_adr=_ZMQ_PUSH_PULL_ADDRESS)
 
         tb.start()
         tb.wait()
