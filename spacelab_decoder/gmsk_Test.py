@@ -9,9 +9,9 @@
 # Author: Renato
 # GNU Radio version: 3.10.9.2
 
-from gnuradio import qtgui
 from gnuradio import blocks
 from gnuradio import digital
+from gnuradio import analog
 from gnuradio import gr
 from gnuradio.filter import firdes
 from gnuradio.fft import window
@@ -46,24 +46,23 @@ class gmsk_Test(gr.top_block):
         ##################################################
 
         self.zeromq_push_sink_0 = zeromq.push_sink(gr.sizeof_char, 1, zmq_address, 100, False, (-1), True)
-        self.digital_gmsk_demod_0 = digital.gmsk_demod(
-            samples_per_symbol=40,
-            gain_mu=0.25,
-            mu=0,
-            omega_relative_limit=0.001,
-            freq_error=0,
-            verbose=False,log=False)
-        self.blocks_wavfile_source_0 = blocks.wavfile_source('F:\\Users\\Renato\\Documents\\UFSC\\SpaceLab-UFSC-GitHub\\spacelab-receiver\\tests\\ping_nrz_invertido.wav', True)
+        #self.quadratic_demod_0 = analog.quadrature_demod_cf(1)
+        self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(samp_rate/baudrate, 0.001, 0, 0.25, 0.001)
+        self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
+        self.blocks_wavfile_source_0 = blocks.wavfile_source(input_file, False)
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_float_to_complex_0, 0), (self.digital_gmsk_demod_0, 0))
-        self.connect((self.blocks_wavfile_source_0, 0), (self.blocks_float_to_complex_0, 0))
-        self.connect((self.blocks_wavfile_source_0, 1), (self.blocks_float_to_complex_0, 1))
-        self.connect((self.digital_gmsk_demod_0, 0), (self.zeromq_push_sink_0, 0))
+        #self.connect((self.blocks_float_to_complex_0, 0), (self.quadratic_demod_0, 0))
+        #self.connect((self.blocks_wavfile_source_0, 0), (self.blocks_float_to_complex_0, 0))
+        #self.connect((self.blocks_wavfile_source_0, 1), (self.blocks_float_to_complex_0, 1))
+        self.connect((self.blocks_wavfile_source_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))
+        #self.connect((self.quadratic_demod_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))
+        self.connect((self.digital_clock_recovery_mm_xx_0, 0), (self.digital_binary_slicer_fb_0, 0))
+        self.connect((self.digital_binary_slicer_fb_0, 0), (self.zeromq_push_sink_0, 0))
 
     def get_zmq_address(self):
         return self.zmq_address
