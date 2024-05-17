@@ -44,7 +44,7 @@ import zmq
 import pyngham
 
 from spacelab_decoder.mm_decoder import mm_decoder
-from spacelab_decoder.gmsk_Test import gmsk_Test
+from grc.GMSK_demod import GMSK_demod
 import spacelab_decoder.version
 
 from spacelab_decoder.bit_buffer import BitBuffer, _BIT_BUFFER_LSB
@@ -113,6 +113,8 @@ class SpaceLabDecoder:
         self.ngham = pyngham.PyNGHam()
 
         self.decoded_packets_index = list()
+
+        self.GMSK = GMSK_demod()
 
     def _build_widgets(self):
         # Main window
@@ -448,6 +450,10 @@ class SpaceLabDecoder:
         tb.start()
         tb.wait()
 
+    def receive_signal(self):
+        self.GMSK.start()
+        self.GMSK.wait()
+        
     def _zmq_receiver(self):
         context = zmq.Context()
         bits_receiver = context.socket(zmq.PULL)

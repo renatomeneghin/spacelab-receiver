@@ -109,7 +109,7 @@ Author: Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="button_receive">
+              <object class="GtkToolButton" id="button_start_receive">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">Run decoder</property>
@@ -123,13 +123,13 @@ Author: Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="button_plot_spectrum">
+              <object class="GtkToolButton" id="button_stop_receive">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">Plot spectrum</property>
                 <property name="label" translatable="yes">Plot spectrum</property>
                 <property name="use-underline">True</property>
-                <property name="stock-id">gtk-info</property>
+                <property name="stock-id">gtk-media-stop</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -151,46 +151,22 @@ Author: Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
               </packing>
             </child>
             <child>
-              <object class="GtkSeparatorToolItem">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="button_gen_wav_file">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Generate wav file</property>
-                <property name="label" translatable="yes">Generate wav file</property>
-                <property name="use-underline">True</property>
-                <property name="stock-id">gtk-convert</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSeparatorToolItem">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">False</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkToolButton" id="toolbutton_about">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes" comments="Information about the software">About</property>
                 <property name="use-underline">True</property>
                 <property name="stock-id">gtk-about</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
