@@ -22,22 +22,26 @@ import time
 from gnuradio import zeromq
 
 _DEFAULT_INPUT_FILE         = "/tmp/audio.wav"
-_DEFAULT_SAMPLE_RATE_HZ     = 48000
+_DEFAULT_RX_FREQ_HZ         = 145980000
+_DEFAULT_RX_GAIN_DB         = 40
+_DEFAULT_SAMPLE_RATE_HZ     = 4800000
+_DEFAULT_SAMPLE_RATE_HZ     = 4800000
 _DEFAULT_BAUDRATE_BPS       = 1200
 _DEFAULT_ZMQ_ADDRESS        = "tcp://127.0.0.1:2112"
 
 class GMSK_Demod(gr.top_block):
 
-    def __init__(self):
+    def __init__(self, Rx_Freq = _DEFAULT_RX_FREQ_HZ, Rx_Gain = _DEFAULT_RX_GAIN_DB, samp_rate=_DEFAULT_SAMPLE_RATE_HZ, baudrate=_DEFAULT_BAUDRATE_BPS, zmq_address=_DEFAULT_ZMQ_ADDRESS):
         gr.top_block.__init__(self, "Not titled yet", catch_exceptions=True)
 
         ##################################################
         # Variables
         ##################################################
-        self.zmq_address = zmq_address = "tcp://127.0.0.1:2112"
-        self.sample_rate_port = sample_rate_port = 48000
+        self.zmq_address = zmq_address
         self.samp_rate = samp_rate = 1e6
         self.Baudrate_BPS = Baudrate_BPS = 1200
+        self.Rx_Freq = Rx_Freq
+        self.Rx_Gain = Rx_Gain
 
         ##################################################
         # Blocks
@@ -55,11 +59,11 @@ class GMSK_Demod(gr.top_block):
         self.uhd_usrp_source_0.set_samp_rate(samp_rate)
         self.uhd_usrp_source_0.set_time_unknown_pps(uhd.time_spec(0))
 
-        self.uhd_usrp_source_0.set_center_freq(0, 0)
+        self.uhd_usrp_source_0.set_center_freq(Rx_Freq, 0)
         self.uhd_usrp_source_0.set_antenna("RX2", 0)
-        self.uhd_usrp_source_0.set_gain(0, 0)
+        self.uhd_usrp_source_0.set_gain(Rx_Gain, 0)
         self.digital_gmsk_demod_0 = digital.gmsk_demod(
-            samples_per_symbol=(int(sample_rate_port/Baudrate_BPS)),
+            samples_per_symbol=(int(samp_rate/Baudrate_BPS)),
             gain_mu=0.25,
             mu=0,
             omega_relative_limit=0.001,
@@ -99,7 +103,19 @@ class GMSK_Demod(gr.top_block):
     def set_Baudrate_BPS(self, Baudrate_BPS):
         self.Baudrate_BPS = Baudrate_BPS
 
+    def get_Rx_Freq(self):
+        return self.Rx_Freq
 
+    def set_Rx_Freq(self, Rx_Freq):
+        self.Rx_Freq = Rx_Freq
+        self.uhd_usrp_source_0.set_center_freq(self.Rx_Freq, 0)
+
+    def get_Rx_Gain(self):
+        return self.Rx_Gain
+
+    def set_Rx_Gain(self, Rx_Gain):
+        self.Rx_Gain = Rx_Gain
+        self.uhd_usrp_source_0.set_gain(self.Rx_Gain, 0)
 
 
 def main(top_block_cls=GMSK_Demod, options=None):

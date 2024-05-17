@@ -112,7 +112,7 @@ Author: Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
               <object class="GtkToolButton" id="button_start_receive">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Run decoder</property>
+                <property name="tooltip-text" translatable="yes">Run receiver</property>
                 <property name="label" translatable="yes">Run decoder</property>
                 <property name="use-underline">True</property>
                 <property name="stock-id">gtk-media-play</property>
@@ -126,7 +126,7 @@ Author: Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
               <object class="GtkToolButton" id="button_stop_receive">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Plot spectrum</property>
+                <property name="tooltip-text" translatable="yes">Stop Recceiver</property>
                 <property name="label" translatable="yes">Plot spectrum</property>
                 <property name="use-underline">True</property>
                 <property name="stock-id">gtk-media-stop</property>
@@ -167,6 +167,19 @@ Author: Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
               <object class="GtkSeparatorToolItem">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="toolbutton_gen_wav">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" comments="Information about the software">Generate Wave file</property>
+                <property name="use-underline">True</property>
+                <property name="stock-id">gtk-convert</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -273,30 +286,10 @@ Author: Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">Audio file:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">2</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                             <child>
-                              <object class="GtkFileChooserButton" id="filechooser_audio_file">
-                                <property name="width-request">200</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Audio file</property>
-                                <property name="filter">filefilter_audio</property>
-                                <property name="title" translatable="yes"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">2</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

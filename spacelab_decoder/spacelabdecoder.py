@@ -44,7 +44,7 @@ import zmq
 import pyngham
 
 from spacelab_decoder.mm_decoder import mm_decoder
-from grc.GMSK_demod import GMSK_demod
+from spacelab_decoder.GMSK_Demod import GMSK_Demod
 import spacelab_decoder.version
 
 from spacelab_decoder.bit_buffer import BitBuffer, _BIT_BUFFER_LSB
@@ -55,6 +55,9 @@ from spacelab_decoder.wav_gen import WavGen
 
 _UI_FILE_LOCAL                  = os.path.abspath(os.path.dirname(__file__)) + '/data/ui/spacelab_decoder.glade'
 _UI_FILE_LINUX_SYSTEM           = '/usr/share/spacelab_decoder/spacelab_decoder.glade'
+
+_UI_FILE_LOCAL_2                  = os.path.abspath(os.path.dirname(__file__)) + '/data/ui/spacelab_receiver.glade'
+_UI_FILE_LINUX_SYSTEM_2           = '/usr/share/spacelab_decoder/spacelab_receiver.glade'
 
 _ICON_FILE_LOCAL                = os.path.abspath(os.path.dirname(__file__)) + '/data/img/spacelab_decoder_256x256.png'
 _ICON_FILE_LINUX_SYSTEM         = '/usr/share/icons/spacelab_decoder_256x256.png'
@@ -100,13 +103,14 @@ class SpaceLabDecoder:
 
         # UI file from Glade
         if os.path.isfile(_UI_FILE_LOCAL):
-            self.builder.add_from_file(_UI_FILE_LOCAL)
+            self.builder.add_from_file(_UI_FILE_LOCAL_2)
         else:
-            self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM)
+            self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM_2)
 
         self.builder.connect_signals(self)
 
-        self._build_widgets()
+        #self._build_widgets()
+        self._build_widgets_2()
 
         self._load_preferences()
 
@@ -114,7 +118,7 @@ class SpaceLabDecoder:
 
         self.decoded_packets_index = list()
 
-        self.GMSK = GMSK_demod()
+        self.GMSK = GMSK_Demod()
 
     def _build_widgets(self):
         # Main window
@@ -239,6 +243,128 @@ class SpaceLabDecoder:
         self.selection_events = self.treeview_events.get_selection()
         self.selection_events.connect("changed", self.on_events_selection_changed)
 
+    def _build_widgets_2(self):
+        # Main window
+        self.window = self.builder.get_object("window_main")
+        if os.path.isfile(_ICON_FILE_LOCAL):
+            self.window.set_icon_from_file(_ICON_FILE_LOCAL)
+        else:
+            self.window.set_icon_from_file(_ICON_FILE_LINUX_SYSTEM)
+        self.window.set_wmclass(self.window.get_title(), self.window.get_title())
+        self.window.connect("destroy", Gtk.main_quit)
+
+        # Preferences dialog
+        self.dialog_preferences = self.builder.get_object("dialog_preferences")
+        self.button_preferences_ok = self.builder.get_object("button_preferences_ok")
+        self.button_preferences_ok.connect("clicked", self.on_button_preferences_ok_clicked)
+        self.button_preferences_default = self.builder.get_object("button_preferences_default")
+        self.button_preferences_default.connect("clicked", self.on_button_preferences_default_clicked)
+        self.button_preferences_cancel = self.builder.get_object("button_preferences_cancel")
+        self.button_preferences_cancel.connect("clicked", self.on_button_preferences_cancel_clicked)
+
+        self.entry_preferences_general_callsign = self.builder.get_object("entry_preferences_general_callsign")
+        self.entry_preferences_general_location = self.builder.get_object("entry_preferences_general_location")
+        self.entry_preferences_general_country = self.builder.get_object("entry_preferences_general_country")
+
+        self.entry_preferences_beacon_baudrate = self.builder.get_object("entry_preferences_beacon_baudrate")
+        self.entry_preferences_beacon_s0 = self.builder.get_object("entry_preferences_beacon_s0")
+        self.entry_preferences_beacon_s1 = self.builder.get_object("entry_preferences_beacon_s1")
+        self.entry_preferences_beacon_s2 = self.builder.get_object("entry_preferences_beacon_s2")
+        self.entry_preferences_beacon_s3 = self.builder.get_object("entry_preferences_beacon_s3")
+
+        self.entry_preferences_downlink_baudrate = self.builder.get_object("entry_preferences_downlink_baudrate")
+        self.entry_preferences_downlink_s0 = self.builder.get_object("entry_preferences_downlink_s0")
+        self.entry_preferences_downlink_s1 = self.builder.get_object("entry_preferences_downlink_s1")
+        self.entry_preferences_downlink_s2 = self.builder.get_object("entry_preferences_downlink_s2")
+        self.entry_preferences_downlink_s3 = self.builder.get_object("entry_preferences_downlink_s3")
+
+        # Generate wav file dialog
+        self.dialog_gen_wav_file = self.builder.get_object("dialog_gen_wav_file")
+        self.button_export_wav_file = self.builder.get_object("button_export_wav_file")
+        self.button_export_wav_file.connect("clicked", self.on_button_export_wav_file_clicked)
+        self.button_cancel_wav_file = self.builder.get_object("button_cancel_wav_file")
+        self.button_cancel_wav_file.connect("clicked", self.on_button_cancel_wav_file_clicked)
+        self.entry_gen_wav_baudrate = self.builder.get_object("entry_gen_wav_baudrate")
+        self.entry_gen_wav_sample_rate = self.builder.get_object("entry_gen_wav_sample_rate")
+        self.entry_gen_wav_amplitude = self.builder.get_object("entry_gen_wav_amplitude")
+        self.entry_gen_wav_packet_id = self.builder.get_object("entry_gen_wav_packet_id")
+        self.entry_gen_wav_callsign = self.builder.get_object("entry_gen_wav_callsign")
+        self.entry_gen_wav_payload = self.builder.get_object("entry_gen_wav_payload")
+        self.textbuffer_wav_gen_payload = self.builder.get_object("textbuffer_wav_gen_payload")
+
+        # About dialog
+        self.aboutdialog = self.builder.get_object("aboutdialog_spacelab_receiver")
+        #self.aboutdialog.set_version(spacelab_decoder.version.__version__)
+        #if os.path.isfile(_LOGO_FILE_LOCAL):
+        #    self.aboutdialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(_LOGO_FILE_LOCAL))
+        #else:
+        #    self.aboutdialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(_LOGO_FILE_LINUX_SYSTEM))
+
+        # Logfile chooser button
+        self.logfile_chooser_button = self.builder.get_object("logfile_chooser_button")
+        self.logfile_chooser_button.set_filename(_DEFAULT_LOGFILE_PATH)
+
+        # Preferences button
+        self.button_preferences = self.builder.get_object("button_preferences")
+        self.button_preferences.connect("clicked", self.on_button_preferences_clicked)
+
+        # Satellite combobox
+        self.liststore_satellite = self.builder.get_object("liststore_satellite")
+        self.liststore_satellite.append(["FloripaSat-1"])
+        self.liststore_satellite.append(["GOLDS-UFSC"])
+        self.liststore_satellite.append(["Aldebaran-1"])
+        self.liststore_satellite.append(["SpaceLab-Transmitter"])
+        self.combobox_satellite = self.builder.get_object("combobox_satellite")
+        cell = Gtk.CellRendererText()
+        self.combobox_satellite.pack_start(cell, True)
+        self.combobox_satellite.add_attribute(cell, "text", 0)
+
+        # Packet type combobox
+        self.combobox_packet_type = self.builder.get_object("combobox_packet_type")
+
+        self.carrier_frequency = self.builder.get_object("entry_carrier_frequency")
+        self.sample_rate = self.builder.get_object("entry_sample_rate")
+        self.receiver_gain = self.builder.get_object("spinbutton_tx_gain")
+
+        # Receive button
+        self.button_receive = self.builder.get_object("button_start_receive")
+        self.button_receive.connect("clicked", self.on_button_receive_clicked)
+
+        # Stop button
+        self.button_stop = self.builder.get_object("button_stop_receive")
+        self.button_stop.connect("clicked", self.on_button_stop_clicked)
+        self.button_stop.set_sensitive(False)
+
+        # Clears button
+        self.button_clear = self.builder.get_object("button_clean")
+        self.button_clear.connect("clicked", self.on_button_clear_clicked)
+
+        # Generate wav file button
+        self.button_gen_wav_file = self.builder.get_object("button_gen_wav_file")
+        self.button_gen_wav_file.connect("clicked", self.on_button_gen_wav_file_clicked)
+
+        # About toolbutton
+        self.toolbutton_about = self.builder.get_object("toolbutton_about")
+        self.toolbutton_about.connect("clicked", self.on_toolbutton_about_clicked)
+
+        # Packet data textview
+        self.textbuffer_pkt_data = Gtk.TextBuffer()
+        self.textview_pkt_data = self.builder.get_object("textview_pkt_data")
+        self.textview_pkt_data.set_buffer(self.textbuffer_pkt_data)
+
+        # Events treeview
+        self.treeview_events = self.builder.get_object("treeview_events")
+        self.listmodel_events = Gtk.ListStore(str, str)
+        self.treeview_events.set_model(self.listmodel_events)
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn("Datetime", cell, text=0)
+        column.set_fixed_width(250)
+        self.treeview_events.append_column(column)
+        column = Gtk.TreeViewColumn("Event", cell, text=1)
+        self.treeview_events.append_column(column)
+        self.selection_events = self.treeview_events.get_selection()
+        self.selection_events.connect("changed", self.on_events_selection_changed)
+
     def write_log(self, msg):
         event = [str(datetime.now()), msg]
 
@@ -298,6 +424,26 @@ class SpaceLabDecoder:
                 z = threading.Thread(target=self._zmq_receiver)
                 x.start()
                 z.start()
+
+    def on_button_receive_clicked(self, button):
+        self.GMSK.set_Rx_Freq(float(self.carrier_frequency.get_text()))
+        self.GMSK.set_Rx_Gain(float(self.receiver_gain.get_value()))
+        self.GMSK.set_Sample_Rate(int(self.sample_rate.get_text()))
+
+        r = threading.Thread(target=self.receive_signal)
+        x = threading.Thread(target=self._zmq_receiver)
+        r.start()
+        x.start()
+
+        self.button_receive.set_sensitive(False)
+        self.button_stop.set_sensitive(True)        
+
+    def on_button_stop_clicked(self, button):
+        self.GMSK.stop()
+        self.GMSK.wait()
+        
+        self.button_receive.set_sensitive(True)
+        self.button_stop.set_sensitive(False)
 
     def on_button_plot_clicked(self, button):
         if self.filechooser_audio_file.get_filename() is None:
@@ -444,14 +590,22 @@ class SpaceLabDecoder:
         self.entry_preferences_downlink_s0.set_text('0x' + _DEFAULT_DOWNLINK_SYNC_WORD[8:10])
 
     def _decode_audio(self, audio_file, sample_rate, baud, play):
-        #tb = mm_decoder(input_file=audio_file, samp_rate=sample_rate, baudrate=baud, zmq_adr=_ZMQ_PUSH_PULL_ADDRESS,play_audio=play)
-        tb = gmsk_Test(input_file=audio_file, samp_rate=sample_rate, baudrate=baud, zmq_adr=_ZMQ_PUSH_PULL_ADDRESS)
+        tb = mm_decoder(input_file=audio_file, samp_rate=sample_rate, baudrate=baud, zmq_adr=_ZMQ_PUSH_PULL_ADDRESS,play_audio=play)
+        #tb = gmsk_Test(input_file=audio_file, samp_rate=sample_rate, baudrate=baud, zmq_adr=_ZMQ_PUSH_PULL_ADDRESS)
 
         tb.start()
         tb.wait()
 
     def receive_signal(self):
-        self.GMSK.start()
+        try:
+            self.GMSK.start()
+        except Exception as e:
+            error_dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, "Error starting the receiver!")
+            error_dialog.format_secondary_text(str(e))
+            error_dialog.run()
+            error_dialog.destroy()
+
+        self.GMSK.stop()
         self.GMSK.wait()
         
     def _zmq_receiver(self):
