@@ -103,14 +103,16 @@ class SpaceLabDecoder:
 
         # UI file from Glade
         if os.path.isfile(_UI_FILE_LOCAL):
-            self.builder.add_from_file(_UI_FILE_LOCAL_2)
+            self.builder.add_from_file(_UI_FILE_LOCAL)
+            #self.builder.add_from_file(_UI_FILE_LOCAL_2)
         else:
-            self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM_2)
+            self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM)
+            #self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM_2)
 
         self.builder.connect_signals(self)
 
-        #self._build_widgets()
-        self._build_widgets_2()
+        self._build_widgets()
+        #self._build_widgets_2()
 
         self._load_preferences()
 
@@ -118,7 +120,7 @@ class SpaceLabDecoder:
 
         self.decoded_packets_index = list()
 
-        self.GMSK = GMSK_Demod()
+        
 
     def _build_widgets(self):
         # Main window
@@ -293,12 +295,12 @@ class SpaceLabDecoder:
         self.textbuffer_wav_gen_payload = self.builder.get_object("textbuffer_wav_gen_payload")
 
         # About dialog
-        self.aboutdialog = self.builder.get_object("aboutdialog_spacelab_receiver")
-        #self.aboutdialog.set_version(spacelab_decoder.version.__version__)
-        #if os.path.isfile(_LOGO_FILE_LOCAL):
-        #    self.aboutdialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(_LOGO_FILE_LOCAL))
-        #else:
-        #    self.aboutdialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(_LOGO_FILE_LINUX_SYSTEM))
+        self.aboutdialog = self.builder.get_object("aboutdialog_spacelab_decoder")
+        self.aboutdialog.set_version(spacelab_decoder.version.__version__)
+        if os.path.isfile(_LOGO_FILE_LOCAL):
+            self.aboutdialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(_LOGO_FILE_LOCAL))
+        else:
+            self.aboutdialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(_LOGO_FILE_LINUX_SYSTEM))
 
         # Logfile chooser button
         self.logfile_chooser_button = self.builder.get_object("logfile_chooser_button")
@@ -340,7 +342,7 @@ class SpaceLabDecoder:
         self.button_clear.connect("clicked", self.on_button_clear_clicked)
 
         # Generate wav file button
-        self.button_gen_wav_file = self.builder.get_object("button_gen_wav_file")
+        self.button_gen_wav_file = self.builder.get_object("toolbutton_gen_wav")
         self.button_gen_wav_file.connect("clicked", self.on_button_gen_wav_file_clicked)
 
         # About toolbutton
@@ -426,6 +428,8 @@ class SpaceLabDecoder:
                 z.start()
 
     def on_button_receive_clicked(self, button):
+        self.GMSK = GMSK_Demod()
+
         self.GMSK.set_Rx_Freq(float(self.carrier_frequency.get_text()))
         self.GMSK.set_Rx_Gain(float(self.receiver_gain.get_value()))
         self.GMSK.set_Sample_Rate(int(self.sample_rate.get_text()))
