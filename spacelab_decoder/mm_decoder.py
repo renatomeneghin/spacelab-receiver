@@ -51,7 +51,7 @@ class mm_decoder(gr.top_block):
         self.zeromq_push_sink_0 = zeromq.push_sink(gr.sizeof_char, 1, zmq_adr, 100, False, -1)
         self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(samp_rate/baudrate, 0.001, 0, 0.25, 0.001)
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
-        self.blocks_wavfile_source_0 = blocks.wavfile_source(input_file, False)
+        self.blocks_wavfile_source_0 = blocks.wavfile_source(input_file, True)
         self.audio_sink_0 = audio.sink(samp_rate, '', play_audio)
 
         # Connections

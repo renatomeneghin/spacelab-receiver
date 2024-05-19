@@ -103,16 +103,16 @@ class SpaceLabDecoder:
 
         # UI file from Glade
         if os.path.isfile(_UI_FILE_LOCAL):
-            self.builder.add_from_file(_UI_FILE_LOCAL)
-            #self.builder.add_from_file(_UI_FILE_LOCAL_2)
+            #self.builder.add_from_file(_UI_FILE_LOCAL)
+            self.builder.add_from_file(_UI_FILE_LOCAL_2)
         else:
-            self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM)
-            #self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM_2)
+            #self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM)
+            self.builder.add_from_file(_UI_FILE_LINUX_SYSTEM_2)
 
         self.builder.connect_signals(self)
 
-        self._build_widgets()
-        #self._build_widgets_2()
+        #self._build_widgets()
+        self._build_widgets_2()
 
         self._load_preferences()
 
